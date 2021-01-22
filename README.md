@@ -34,7 +34,7 @@ At this moment,
 numbers, booleans, and null are
 just strings.
 For example,
-the boolean value "true" is
+the boolean value `true` is
 not `\iftrue` but `true`.
 At this moment,
 backslash escaping of strings is ignored.
