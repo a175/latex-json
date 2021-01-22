@@ -4,8 +4,7 @@ This is a latex style file which define a macro of a perser of JSON.
 
 This style file requires `catchfile.sty`,
 which is contained in
-TeXLive as catchfile
-and in MiKTeX as catchfile.
+TeXLive and MiKTeX as catchfile.
 
 ## How to use
 
