@@ -41,3 +41,8 @@ backslash escaping of strings is ignored.
 For example.
 `"a\nu"` is not `a\\u` but `a\nu`.
 
+At this moment,
+this style file does not work for
+JSON files containing the following:
+* keys containing the string `->`
+* backslash-escaped keys
