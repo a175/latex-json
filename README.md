@@ -13,6 +13,7 @@ If you want to read a JSON file `suplement.json` from the main file `main.tex`,
 then do the following:
 * Add `\usepackage{json}` in preamble of `main.tex`.
 * Add `\inputjson{xxx}{suplement.json}` in `main.tex`.
+
 If `suplement.json` is
 ```
 {"x":"a",
