@@ -19,7 +19,7 @@ If `suplement.json` is
  "y":{"X":"b"},
  "z":["c","d"]}
 ```
-then you can use the terminal strings `a`, `b`, `c`, and `d` by
+then you can obtain the terminal strings `a`, `b`, `c`, and `d` by
 ```
 \jsondata{xxx->x}
 \jsondata{xxx->y->X}
@@ -30,14 +30,12 @@ respectively.
 
 A terminal literal is 
 a sring, number, boolean, or null.
-
 At this moment,
 numbers, booleans, and null are
 just strings.
 For example,
 the boolean value "true" is
 not `\iftrue` but `true`.
-
 At this moment,
 backslash escaping of strings is ignored.
 For example.
