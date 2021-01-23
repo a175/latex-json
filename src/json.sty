@@ -1,5 +1,10 @@
 \RequirePackage{catchfile}
 
+\newcommand{\nu@json@literal@true}{true}
+\newcommand{\nu@json@literal@false}{false}
+\newcommand{\nu@json@literal@null}{null}
+
+
 \newcounter{nu@json@stack@level}
 \newcounter{nu@json@stack@popedlevel}
 \addtocounter{nu@json@stack@level}{1}%
@@ -102,9 +107,9 @@
       \nu@json@stack@get{next}%
 }
 
-\def\nu@json@true{\nu@json@var@set@value@from@stack{true}\nu@json@skip@to@end}
-\def\nu@json@false{\nu@json@var@set@value@from@stack{false}\nu@json@skip@to@end}
-\def\nu@json@null{\nu@json@var@set@value@from@stack{null}\nu@json@skip@to@end}
+\def\nu@json@true{\nu@json@var@set@value@from@stack{\nu@json@literal@true}\nu@json@skip@to@end}
+\def\nu@json@false{\nu@json@var@set@value@from@stack{\nu@json@literal@false}\nu@json@skip@to@end}
+\def\nu@json@null{\nu@json@var@set@value@from@stack{\nu@json@literal@null}\nu@json@skip@to@end}
 
 \def\nu@json@skip@to@end#1{%
   \@ifnextchar,{\nu@json@stack@get{next}}{%

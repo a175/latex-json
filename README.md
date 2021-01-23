@@ -30,16 +30,29 @@ respectively.
 
 A terminal literal is 
 a sring, number, boolean, or null.
-At this moment,
-numbers, booleans, and null are
-just strings.
-For example,
-the boolean value `true` is
-not `\iftrue` but `true`.
+
 At this moment,
 backslash escaping of strings is ignored.
 For example.
 `"a\nu"` is not `a\\u` but `a\nu`.
+
+At this moment,
+numbers is just strings.
+The numbers is not counter nor length nor dimension.
+
+Booleans `true` and `false`  are strings defined by
+```
+\newcommand{\nu@json@literal@true}{true}
+\newcommand{\nu@json@literal@false}{false}
+```
+respectively.
+You may use `\renewcommand{\nu@json@literal@true}{\iftrue}` to
+change form string to `\iftrue`.
+
+The JSON literal `null` is a string defined by
+```
+\newcommand{\nu@json@literal@null}{null}
+```
 
 At this moment,
 this style file does not work for
