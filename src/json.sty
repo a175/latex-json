@@ -1,0 +1,149 @@
+\RequirePackage{catchfile}
+
+\newcounter{nu@json@stack@level}
+\newcounter{nu@json@stack@popedlevel}
+\addtocounter{nu@json@stack@level}{1}%
+
+\newcounter{@nu@json@temp}
+
+\newcommand{\nu@json@stack@increment}[1]{%
+  \setcounter{@nu@json@temp}{\nu@json@stack@get{#1}}%
+  \addtocounter{@nu@json@temp}{1}%
+  \expandafter\edef\csname @nu@json@stack@\thenu@json@stack@level:#1\endcsname{\the@nu@json@temp}%
+}
+\newcommand{\nu@json@stack@set}[2]{%
+\expandafter\def\csname @nu@json@stack@\thenu@json@stack@level:#1\endcsname{#2}%
+}
+\newcommand{\nu@json@stack@eset}[2]{%
+\expandafter\edef\csname @nu@json@stack@\thenu@json@stack@level:#1\endcsname{#2}%
+}
+\newcommand{\nu@json@stack@get}[1]{%
+\csname @nu@json@stack@\thenu@json@stack@level:#1\endcsname%
+}
+\newcommand{\nu@json@stack@get@popedlevel}[1]{%
+\csname @nu@json@stack@\thenu@json@stack@popedlevel:#1\endcsname%
+}
+\newcommand{\nu@json@stack@push}{%
+  \addtocounter{nu@json@stack@level}{1}%
+  \addtocounter{nu@json@stack@popedlevel}{1}%
+  \nu@json@stack@eset{namespace}{\nu@json@stack@get@popedlevel{namespace}->\nu@json@stack@get@popedlevel{key}}%
+}
+\newcommand{\nu@json@stack@pop}{%
+  \addtocounter{nu@json@stack@level}{-1}%
+  \addtocounter{nu@json@stack@popedlevel}{-1}%
+}
+
+\nu@json@stack@eset{namespace}{jsonroot}
+\nu@json@stack@eset{key}{jsonroot}
+%\newcommand{\nu@json@var@set}[3]{%
+%\expandafter\def\csname @nu@json@var@val@#1->#2\endcsname{#3}%
+%}
+\newcommand{\nu@json@var@set}[2]{%
+\expandafter\def\csname @nu@json@var@val@#1\endcsname{#2}%
+}
+%\newcommand{\nu@json@var@set@callable}[1]{%
+%  \expandafter\def\csname @nu@json@var@val@#1\endcsname##1{\csname @nu@json@var@val@#1->##1\endcsname}%
+%}
+\newcommand{\nu@json@var@get}[1]{%
+  \csname @nu@json@var@val@#1\endcsname%
+}
+
+%\newcommand{\nu@json@var@set@callable@from@stack}{%
+%  \edef\nu@json@temp@k{\nu@json@stack@get{namespace}}%
+%     \nu@json@var@set@callable{\nu@json@temp@k}%
+%}
+\newcommand{\nu@json@var@set@value@from@stack}[1]{%
+  %\edef\nu@json@temp@k{\nu@json@stack@get{namespace}->\nu@json@stack@get{key}}
+  %\nu@json@var@set{\nu@json@temp@k}{#1}%
+  \nu@json@var@set{\nu@json@stack@get{namespace}->\nu@json@stack@get{key}}{#1}%
+}
+
+\newcommand{\nu@json@bracedobject}[1]{%
+  \nu@json@stack@push%
+  %\nu@json@var@set@callable@from@stack%
+  \nu@json@stack@set{next}{\nu@json@object@next}%
+  \nu@json@object@keyval#1,]%
+}
+\def\nu@json@object@keyval{\@ifnextchar"{\nu@json@object@key}{\nu@json@object@finish}}
+\def\nu@json@object@key#1"#2"#3:{\nu@json@stack@set{key}{#2}\nu@json@value}
+\def\nu@json@object@next{\@ifnextchar,{\nu@json@object@skip@comma}{\nu@json@object@finish}}
+\def\nu@json@object@skip@comma#1{\nu@json@object@keyval}
+\def\nu@json@object@finish#1{\nu@json@stack@pop\nu@json@stack@get{next}}
+
+\def\nu@json@braketarray[{%
+    \nu@json@stack@push%
+    %\nu@json@var@set@callable@from@stack%
+    \nu@json@stack@set{next}{\nu@json@array@next}%
+    \nu@json@stack@set{key}{0}%
+    \nu@json@array@value%
+}
+\def\nu@json@array@value{\@ifnextchar]{\nu@json@array@finish}{\nu@json@value}}
+\def\nu@json@array@next{%
+  \nu@json@stack@increment{key}%
+  \@ifnextchar,{\nu@json@array@skip@comma}{\nu@json@array@finish}%
+}
+\def\nu@json@array@skip@comma#1{\nu@json@array@value}
+\def\nu@json@array@finish#1{\nu@json@stack@pop\nu@json@stack@get{next}}
+
+\def\nu@json@string#1"#2"{%
+  \nu@json@var@set@value@from@stack{#2}%
+  \nu@json@stack@get{next}%
+}
+
+\def\nu@json@number#1#2{%
+  \@ifnextchar,{\nu@json@number@finish{#1#2}}{%
+    \@ifnextchar]{\nu@json@number@finish{#1#2}}{%
+     \nu@json@number{#1#2}%
+    }
+  }
+}
+\def\nu@json@number@finish#1{%
+      \nu@json@var@set@value@from@stack{#1}%
+      \nu@json@stack@get{next}%
+}
+
+\def\nu@json@true{\nu@json@var@set@value@from@stack{true}\nu@json@skip@to@end}
+\def\nu@json@false{\nu@json@var@set@value@from@stack{false}\nu@json@skip@to@end}
+\def\nu@json@null{\nu@json@var@set@value@from@stack{null}\nu@json@skip@to@end}
+
+\def\nu@json@skip@to@end#1{%
+  \@ifnextchar,{\nu@json@stack@get{next}}{%
+    \@ifnextchar]{\nu@json@stack@get{next}}{%
+     \nu@json@skip@to@end%
+    }
+  }
+}
+
+\def\nu@json@value{%
+  \@ifnextchar"{\nu@json@string}{%
+    \@ifnextchar\bgroup{\nu@json@bracedobject}{%
+      \@ifnextchar[{\nu@json@braketarray}{%
+          \@ifnextchar t{\nu@json@true}{%
+            \@ifnextchar f{\nu@json@false}{%
+              \@ifnextchar n{\nu@json@null}{%
+                \nu@json@number{}{}%
+              }%
+            }%
+          }%
+      }%
+    }%
+  }%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Frontend functions
+  
+%Usage: \inputjsondata{varname}{filename.json}
+\newcommand{\inputjsondata}[2]{%
+  \CatchFileDef\nu@json@temp@jsonfile@contents{#2}{}%
+  \nu@json@stack@set{namespace}{jsonroot}\nu@json@stack@set{key}{#1}%
+  \expandafter\nu@json@bracedobject\nu@json@temp@jsonfile@contents%
+}
+
+%Usage: e.g. \defjsondata{varname}{"a":12,"b":13}
+\newcommand{\defjsondata}[1]{\nu@json@stack@set{namespace}{jsonroot}\nu@json@stack@set{key}{#1}\nu@json@bracedobject}
+
+%Usage: e.g. jsondata{varname->a}
+\newcommand{\jsondata}[1]{\nu@json@var@get{jsonroot->#1}}
+
