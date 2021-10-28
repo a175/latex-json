@@ -141,6 +141,28 @@
 }
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% functions for list of object with ids
+
+\newcounter{@nu@json@temp@loop@count}
+\newcounter{@nu@json@temp@loop@countmax}
+
+% \@nu@json@make@dataindex@dict@for{keyofid}{pathtolist}
+% define pathtolist->keyofid2index->HOGE to be
+% the index i such that pathtolist->i->keyofid is HOGE
+\newcommand{\@nu@json@make@dataindex@dict@for}[2]{\setcounter{@nu@json@temp@loop@count}{0}%
+\setcounter{@nu@json@temp@loop@countmax}{\nu@json@var@get{jsonroot->#2->length}}%
+\loop\ifnum\value{@nu@json@temp@loop@count}<\value{@nu@json@temp@loop@countmax}%
+\nu@json@var@eset{jsonroot->#2->#12index->\nu@json@var@get{jsonroot->#2->\number\value{@nu@json@temp@loop@count}->#1}}{\number\value{@nu@json@temp@loop@count}}%
+\addtocounter{@nu@json@temp@loop@count}{1}%
+\repeat}
+
+% \nu@json@jsondata@by{keyofid}{pathtolist}{HOGE}{pathtodata}
+% get value of pathtolist->i->pathtodata for the index i such that pathtolist->i->keyofid is HOGE.
+\newcommand{\nu@json@jsondata@by}[4]{\jsondata{#2->\jsondata{#2->#12index->#3}->#4}}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Frontend functions
   
