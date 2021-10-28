@@ -46,6 +46,9 @@
 \newcommand{\nu@json@var@set}[2]{%
 \expandafter\def\csname @nu@json@var@val@#1\endcsname{#2}%
 }
+\newcommand{\nu@json@var@eset}[2]{%
+\expandafter\edef\csname @nu@json@var@val@#1\endcsname{#2}%
+}
 %\newcommand{\nu@json@var@set@callable}[1]{%
 %  \expandafter\def\csname @nu@json@var@val@#1\endcsname##1{\csname @nu@json@var@val@#1->##1\endcsname}%
 %}
@@ -88,7 +91,10 @@
   \@ifnextchar,{\nu@json@array@skip@comma}{\nu@json@array@finish}%
 }
 \def\nu@json@array@skip@comma#1{\nu@json@array@value}
-\def\nu@json@array@finish#1{\nu@json@stack@pop\nu@json@stack@get{next}}
+\def\nu@json@array@finish#1{%
+  \nu@json@stack@increment{key}%
+  \nu@json@var@eset{\nu@json@stack@get{namespace}->length}{\nu@json@stack@get{key}}%
+  \nu@json@stack@pop\nu@json@stack@get{next}}
 
 \def\nu@json@string#1"#2"{%
   \nu@json@var@set@value@from@stack{#2}%
