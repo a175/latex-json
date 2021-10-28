@@ -92,7 +92,6 @@
 }
 \def\nu@json@array@skip@comma#1{\nu@json@array@value}
 \def\nu@json@array@finish#1{%
-  \nu@json@stack@increment{key}%
   \nu@json@var@eset{\nu@json@stack@get{namespace}->length}{\nu@json@stack@get{key}}%
   \nu@json@stack@pop\nu@json@stack@get{next}}
 
